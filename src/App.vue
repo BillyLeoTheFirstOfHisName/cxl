@@ -1,28 +1,100 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h1>Cancellation Penalty Decoder</h1>
+    <div class="container">
+      <div>
+        <label for="textInput">JSON Input:</label>
+        <textarea id="textInput" v-model="textInput" rows="4" cols="50"></textarea>
+      </div>
+      <p v-if="jsonError" class="error">{{ jsonError }}</p>
+      <div>
+        <label for="checkIn">Check In:</label>
+        <vuejs-datepicker id="checkIn" v-model="checkIn" @input="onCheckInChange"></vuejs-datepicker>
+      </div>
+      <div>
+        <label for="checkOut">Check Out:</label>
+        <vuejs-datepicker id="checkOut" v-model="checkOut" :disabled-dates="disabledDatesForCheckOut"></vuejs-datepicker>
+      </div>
+      <button @click="submit">Submit</button>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import VuejsDatepicker from 'vuejs-datepicker';
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
-  }
-}
+    VuejsDatepicker,
+  },
+  data() {
+    return {
+      textInput: '',
+      checkIn: null,
+      checkOut: null,
+      jsonError: null,
+    };
+  },
+  computed: {
+    disabledDatesForCheckOut() {
+      if (!this.checkIn) {
+        return {};
+      }
+
+      const minDate = new Date(this.checkIn.getTime() + 86400000);
+      const maxDate = new Date(this.checkIn.getTime() + 500 * 86400000);
+
+      return {
+        customPredictor: date => {
+          return !(date >= minDate && date <= maxDate);
+        },
+      };
+    },
+  },
+  methods: {
+    onCheckInChange() {
+      if (this.checkOut && (this.checkOut <= this.checkIn || this.checkOut > new Date(this.checkIn.getTime() + 500 * 86400000))) {
+        this.checkOut = null;
+      }
+    },
+    validateJson() {
+      try {
+        JSON.parse(this.textInput);
+        this.jsonError = null;
+        return true;
+      } catch (error) {
+        this.jsonError = 'Invalid JSON format';
+        return false;
+      }
+    },
+    submit() {
+      if (this.validateJson()) {
+        console.log('Valid JSON:', this.textInput);
+        console.log('Check In:', this.checkIn);
+        console.log('Check Out:', this.checkOut);
+      }
+    },
+  },
+};
 </script>
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+
+.container {
+  text-align: left;
+  display: inline-block;
+}
+
+.error {
+  color: red;
 }
 </style>
