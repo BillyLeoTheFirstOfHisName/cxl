@@ -20,9 +20,9 @@
   </div>
 </template>
 
-
 <script>
 import VuejsDatepicker from 'vuejs-datepicker';
+import axios from "axios";
 
 export default {
   name: 'App',
@@ -69,16 +69,35 @@ export default {
         return false;
       }
     },
-    submit() {
-      if (this.validateJson()) {
+    async submit() {
+      if (this.validateJson() && this.checkIn && this.checkOut) {
         console.log('Valid JSON:', this.textInput);
         console.log('Check In:', this.checkIn);
         console.log('Check Out:', this.checkOut);
+
+        // Send the request to the Flask API
+        try {
+          const ci_date = this.checkIn.toISOString().split("T")[0];
+          const co_date = this.checkOut.toISOString().split("T")[0];
+          const cxl_json = this.textInput;
+
+          const response = await axios.get("http://billyleo.pythonanywhere.com/api/cxl-penalties", {
+            params: {
+              ci_date,
+              co_date,
+              cxl_json,
+            },
+          });
+          console.log("API response:", response.data);
+        } catch (error) {
+          console.error("Error fetching cancellation penalties:", error);
+        }
       }
     },
   },
 };
 </script>
+
 
 <style>
 #app {
