@@ -2,16 +2,16 @@
   <div id="app">
     <h1>Cancellation Penalty Decoder</h1>
     <div class="container">
-      <div>
+      <div class="input-group">
         <label for="textInput">JSON Input:</label>
         <textarea id="textInput" v-model="textInput" rows="4" cols="50"></textarea>
       </div>
       <p v-if="jsonError" class="error">{{ jsonError }}</p>
-      <div>
+      <div class="input-group">
         <label for="checkIn">Check In:</label>
         <vuejs-datepicker id="checkIn" v-model="checkIn" @input="onCheckInChange"></vuejs-datepicker>
       </div>
-      <div>
+      <div class="input-group">
         <label for="checkOut">Check Out:</label>
         <vuejs-datepicker id="checkOut" v-model="checkOut" :disabled-dates="disabledDatesForCheckOut"></vuejs-datepicker>
       </div>
@@ -19,6 +19,7 @@
     </div>
   </div>
 </template>
+
 
 <script>
 import VuejsDatepicker from 'vuejs-datepicker';
@@ -97,4 +98,14 @@ export default {
 .error {
   color: red;
 }
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.input-group label {
+  margin-bottom: 0.5rem;
+}
+
 </style>
