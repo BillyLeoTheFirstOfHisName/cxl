@@ -81,7 +81,7 @@ export default {
           const co_date = this.checkOut.toISOString().split("T")[0];
           const cxl_json = this.textInput;
 
-          const response = await axios.get("http://billyleo.pythonanywhere.com/api/cxl-penalties", {
+          const response = await axios.get("https://billyleo.pythonanywhere.com/api/cxl-penalties", {
             params: {
               ci_date,
               co_date,
